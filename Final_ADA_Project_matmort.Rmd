@@ -1,0 +1,98 @@
+---
+title: "ADA Final Project"
+output: html_notebook
+---
+
+```{r}
+## using Poisson like Kim suggested.
+## Import data. Data was cleaned in excel, and 68 observations (4.13%) out of a total of 12312 observations were censored (cause3 == unknown)
+##
+##library(readxl)
+##MaternalMortalityData <- read_excel("("/Users/MaryQuandt/Desktop/RonWeasley/matmort.xlsx")
+##View(MaternalMortalityData)
+```
+
+
+```{r}
+## General Poisson without interaction terms or stratified data. Not to be reported, only used for reference.
+## mod.ba == basic model
+##
+##
+## Including offset(log(n)) in the right hand side OFFSET 
+mod.ba <- glm(deaths ~ cause3 + race + age + offset(log(population)), 
+              family = poisson(link = "log"), 
+              data = matmort)
+##
+## Results from regular Poisson
+summary(mod.ba)
+##
+glm.RR(mod.ba, 3)
+
+```
+
+
+```{r}
+## subset the prenatal deaths 
+## mod.pn == prenatal model
+##
+##
+## Including offset(log(n)) in the right hand side OFFSET 
+mod.pn <- glm(deaths ~ race + age + offset(log(population)), 
+              family = poisson(link = "log"), 
+              data = matmort[which(matmort$cause3=="prenatal"),])
+##
+## Results from regular Poisson
+summary(mod.pn)
+##
+glm.RR(mod.pn,3)
+```
+
+
+```{r}
+##subset the during deaths 
+##mod.du == during model
+##
+##
+## Including offset(log(n)) in the right hand side OFFSET 
+mod.du <- glm(deaths ~ race + age +offset(log(population)), 
+              family = poisson(link = "log"), 
+              data = matmort[which(matmort$cause3=="during"),])
+##
+## Results from regular Poisson
+summary(mod.du)
+##
+glm.RR(mod.du,3)
+```
+
+
+
+```{r}
+##subset the postpartum deaths 
+##mod.pp == postpartum model
+##
+##
+## Including offset(log(n)) in the right hand side OFFSET 
+mod.pp <- glm(deaths ~ race + age + offset(log(population)), 
+              family = poisson(link = "log"), 
+              data = matmort[which(matmort$cause3=="postpartum"),])
+##
+## Results from regular Poisson
+summary(mod.pp)
+##
+glm.RR(mod.pp,3)
+```
+
+
+```{r}
+##Run the model looking at interaction terms
+##
+##
+mod.int <- glm(deaths ~ race + age + cause3 + race*cause3 + age*cause3 + offset(log(population)),
+               family = poisson(link = "log"), 
+               data = matmort)
+##
+summary(mod.int)
+##
+glm.RR(mod.int,3)
+```
+
